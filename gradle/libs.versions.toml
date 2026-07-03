@@ -1,0 +1,42 @@
+[versions]
+edc = "0.19.0-SNAPSHOT"
+edc-build = "1.5.2"
+
+
+[libraries]
+# EDC(-V) BOM modules
+edcv-bom-controlplane = { module = "org.eclipse.edc:controlplane-virtual-base-bom", version.ref = "edc" }
+edcv-bom-controlplane-sql = { module = "org.eclipse.edc:controlplane-virtual-feature-sql-bom", version.ref = "edc" }
+edcv-bom-controlplane-dcp = { module = "org.eclipse.edc:controlplane-virtual-feature-dcp-bom", version.ref = "edc" }
+edcv-bom-controlplane-nats = { module = "org.eclipse.edc:controlplane-virtual-feature-nats-bom", version.ref = "edc" }
+edc-bom-identityhub = { module = "org.eclipse.edc:identityhub-oauth2-bom", version.ref = "edc" }
+edc-bom-identityhub-sql = { module = "org.eclipse.edc:identityhub-feature-sql-bom", version.ref = "edc" }
+edc-bom-issuerservice = { module = "org.eclipse.edc:issuerservice-oauth2-bom", version.ref = "edc" }
+edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sql-bom", version.ref = "edc" }
+
+# EDC spi dependencies
+edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
+
+# EDC dependencies
+edc-core-participantcontext-config = { module = "org.eclipse.edc:participant-context-config-core", version.ref = "edc" }
+edc-events-nats = { module = "org.eclipse.edc:events-nats", version.ref = "edc" }
+edc-monitor-console = { module = "org.eclipse.edc:console-monitor", version.ref = "edc" }
+edc-monitor-otel = { module = "org.eclipse.edc:otel-monitor", version.ref = "edc" }
+edc-store-participantcontext-config-sql = { module = "org.eclipse.edc:participantcontext-config-store-sql", version.ref = "edc" }
+edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
+edc-vault-transit = { module = "org.eclipse.edc:identity-hub-keypairs-transit", version.ref = "edc" }
+
+# Identityhub dependencies
+edc-ih-api-did = { module = "org.eclipse.edc:did-api", version.ref = "edc" }
+edc-ih-api-participants = { module = "org.eclipse.edc:participant-context-api", version.ref = "edc" }
+
+# third party deps
+bouncyCastle-bcprovJdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.84" }
+opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version = "1.63.0" }
+opentelemetry-javaagent = { module = "io.opentelemetry.javaagent:opentelemetry-javaagent", version = "2.29.0" }
+
+
+[plugins]
+edc-build = { id = "org.eclipse.edc.edc-build", version.ref = "edc-build" }
+docker = { id = "com.bmuschko.docker-remote-api", version = "10.0.0" }
+shadow = { id = "com.gradleup.shadow", version = "9.4.3" }

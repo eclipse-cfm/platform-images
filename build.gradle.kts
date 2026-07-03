@@ -1,0 +1,63 @@
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins {
+    `java-library`
+    id("com.bmuschko.docker-remote-api") version "10.0.0"
+    id("com.gradleup.shadow") version "9.4.3"
+    alias(libs.plugins.edc.build)
+}
+
+val edcBuildId = libs.plugins.edc.build.get().pluginId
+
+val downloadOtelAgent by tasks.register("downloadOtelAgent", Copy::class) {
+    val openTelemetry = configurations.create("open-telemetry")
+
+    dependencies {
+        openTelemetry(libs.opentelemetry.javaagent)
+    }
+
+    from(openTelemetry)
+    into("build/otel")
+    rename { "opentelemetry-javaagent.jar" }
+}
+
+allprojects {
+    apply(plugin = edcBuildId)
+}
+subprojects {
+    afterEvaluate {
+        if (project.plugins.hasPlugin("com.github.johnrengelman.shadow") &&
+            file("${project.projectDir}/src/main/docker/Dockerfile").exists()
+        ) {
+
+            //actually apply the plugin to the (sub-)project
+            apply(plugin = "com.bmuschko.docker-remote-api")
+
+            val copyOtelAgent = tasks.register<Copy>("copyOtelAgent") {
+                dependsOn(rootProject.tasks.named("downloadOtelAgent"))
+                from(rootProject.layout.buildDirectory.dir("otel"))
+                into(project.layout.buildDirectory.dir("otel"))
+            }
+            var shadowJarTask = tasks.named("shadowJar").get()
+            shadowJarTask.dependsOn(copyOtelAgent)
+
+            // configure the "dockerize" task
+            val dockerTask: DockerBuildImage = tasks.create("dockerize", DockerBuildImage::class) {
+                val dockerContextDir = project.projectDir
+                dockerFile.set(file("$dockerContextDir/src/main/docker/Dockerfile"))
+                images.add("ghcr.io/eclipse-cfm/platform-images/${project.name}:${project.version}")
+                images.add("ghcr.io/eclipse-cfm/platform-images/${project.name}:latest")
+
+                //images.add("${project.name}:latest")
+                // specify platform with the -Dplatform flag:
+                if (System.getProperty("platform") != null)
+                    platform.set(System.getProperty("platform"))
+                buildArgs.put("JAR", "build/libs/${project.name}.jar")
+                buildArgs.put("OTEL_AGENT", "build/otel/opentelemetry-javaagent.jar")
+                inputDir.set(file(dockerContextDir))
+            }
+            dockerTask.dependsOn(tasks.named("shadowJar"))
+        }
+    }
+}
