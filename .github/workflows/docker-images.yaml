@@ -1,11 +1,12 @@
 name: Build and Publish Docker Images
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - '**'
+      - "**"
     tags:
-      - '**'
+      - "**"
 
 env:
   REGISTRY: ghcr.io
@@ -38,7 +39,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '23'
+          java-version: "23"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
