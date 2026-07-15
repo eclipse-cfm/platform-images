@@ -14,6 +14,7 @@
 
 plugins {
     id("application")
+    alias(libs.plugins.edc.build)
     alias(libs.plugins.shadow)
     alias(libs.plugins.docker)
 }
@@ -28,7 +29,8 @@ dependencies {
     runtimeOnly(libs.edc.monitor.console)
     runtimeOnly(libs.edc.monitor.otel)
     runtimeOnly(libs.edc.events.nats)
-
+    // NKey authentication for the NATS connection (seed file delivered by the deployment)
+    runtimeOnly(libs.edc.nats.auth.nkey)
     runtimeOnly(libs.edc.vault.hashicorp)
     runtimeOnly(libs.bouncyCastle.bcprovJdk18on)
     runtimeOnly(libs.opentelemetry.exporter.otlp)

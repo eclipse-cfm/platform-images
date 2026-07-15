@@ -15,7 +15,9 @@
 plugins {
     `java-library`
     id("application")
+    alias(libs.plugins.edc.build)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.docker)
 }
 
 
@@ -31,6 +33,8 @@ dependencies {
     runtimeOnly(libs.edc.monitor.console)
     runtimeOnly(libs.edc.monitor.otel)
     runtimeOnly(libs.edc.events.nats)
+    // NKey authentication for the NATS connection (seed file delivered by the deployment)
+    runtimeOnly(libs.edc.nats.auth.nkey)
     runtimeOnly(libs.edc.vault.transit)
 
     runtimeOnly(libs.opentelemetry.exporter.otlp)
