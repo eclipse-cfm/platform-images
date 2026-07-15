@@ -20,6 +20,7 @@ edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
 # EDC dependencies
 edc-core-participantcontext-config = { module = "org.eclipse.edc:participant-context-config-core", version.ref = "edc" }
 edc-events-nats = { module = "org.eclipse.edc:events-nats", version.ref = "edc" }
+edc-nats-auth-nkey = { module = "org.eclipse.edc:nats-auth-nkey", version.ref = "edc" }
 edc-monitor-console = { module = "org.eclipse.edc:console-monitor", version.ref = "edc" }
 edc-monitor-otel = { module = "org.eclipse.edc:otel-monitor", version.ref = "edc" }
 edc-store-participantcontext-config-sql = { module = "org.eclipse.edc:participantcontext-config-store-sql", version.ref = "edc" }
