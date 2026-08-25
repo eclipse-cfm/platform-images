@@ -83,11 +83,12 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE_PREFIX }}/${{ matrix.module }}
-          # - `latest` on main pushes and on tags
+          # - `latest` on main pushes and on stable tags only (a tag whose name
+          #   contains `-` is treated as a semver pre-release, e.g. v1.2.0-rc1)
           # - the short commit hash on every push/tag
           # - the tag name when a tag is created
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/') }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || (startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')) }}
             type=sha,format=short,prefix=
             type=ref,event=tag
             type=semver,pattern={{version}}
@@ -115,11 +116,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # A tag whose name contains `-` is a semver pre-release (v1.2.0-rc1,
+      # v1.2.0-alpha.1, ...) and is flagged as such instead of becoming the
+      # latest release.
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
         run: |
-          gh release create "${{ github.ref_name }}" \
-            --repo "${{ github.repository }}" \
-            --title "${{ github.ref_name }}" \
-            --generate-notes
+          if [[ "$TAG" == *-* ]]; then
+            echo "Tag $TAG is a pre-release"
+            release_flag="--prerelease"
+          else
+            echo "Tag $TAG is a stable release"
+            release_flag="--latest"
+          fi
+          gh release create "$TAG" \
+            --repo "$REPO" \
+            --title "$TAG" \
+            --generate-notes \
+            "$release_flag"
