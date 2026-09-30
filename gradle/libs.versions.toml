@@ -1,5 +1,5 @@
 [versions]
-edc = "1.0.0-SNAPSHOT"
+edc = "1.0.0-RC4"
 edc-build = "1.5.2"
 
 
